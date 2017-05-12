@@ -2,15 +2,13 @@
 #define CHOG_H_INCLUDED
 
 #include "CTables.h"
-#include "CSVM.h"
 #include <iostream>
 #include <string>
 #include <fstream>
 using namespace std;
-#include "cv.h"
-#include "highgui.h"
-#include "cxcore.h"
-
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 const int KERNEL[3] = {-1, 0 ,1};  //求解梯度所用核
 
 //HOG中cell结构体//
@@ -66,10 +64,6 @@ public:
     void saveHistMax(string outPath);  //保存各个cell中的最大值
     void exportFeatVect(string exportPath, int x, int y, int w, int h, int l);
     void getFeatVect(double* featVect, int x, int y, int w, int h);
-    void slideWindowPredict(double* feat, CSVM& svm, cv::Mat cvImage = cv::Mat());
-    void cropNegSample(cv::Mat cvImage, int label, string exportPath);
-    void cropPosSample(cv::Mat cvImage, int label, string exportPath);
-    void cropNegSample(cv::Mat cvImage, string exportPath);
 private:
     void releaseHist();  //释放直方图空间
     void releaseDiff();
@@ -529,110 +523,6 @@ void CHog::getFeatVect(double* featVect, int x, int y, int w, int h)
     }
 	//cout << "feature vector got" << endl;
 }
-
-void CHog::slideWindowPredict(double* feat, CSVM& svm, cv::Mat cvImage)
-{
-    cout<<"slide window predict"<<endl;
-    double score;
-    for(int y = 0; y + windowHeight < numCellY; y++)
-    {
-        for(int x = 0; x + windowWidth < numCellX; x++)
-        {
-            cout<<"y:"<<y<<" x:"<<x<<endl;
-            //hog.exportFeatVect(exportPath, x, y, WINDOW_WIDTH, WINDOW_HEIGHT, label);
-            getFeatVect(feat, x, y, windowWidth, windowHeight);
-            score = svm.predict(feat);
-            cout<<"score: "<<score<<endl;
-            cv::Mat cvVisualizationHalf = visualizationHalf();  //将直方图用图像进行显示
-            cv::Mat cvVisualizeWindow = visualizeWindow(x, y, windowWidth, windowHeight);  //将直方图用图像进行显示
-            //if(cvImage.data != NULL)
-            {
-                cv::imshow("image", cvImage);
-                cv::imshow("visualHalf", cvVisualizationHalf);
-                cv::imshow("visualWindow", cvVisualizeWindow);
-                cv::waitKey(0);
-            }
-        }
-    }
-}
-
-void CHog::cropNegSample(cv::Mat cvImage, int label, string exportPath)
-{
-    int xs[2] = {1, 5};
-    int ys[2] = {0, 6};
-    for(int y = 0; y + windowHeight < numCellY; y++)
-    {
-        for(int i = 0; i < 2; i++)
-        {
-            int x = xs[i];
-            //cout<<"y:"<<y<<" x:"<<x<<endl;
-            //hog.exportFeatVect(exportPath, x, y, WINDOW_WIDTH, WINDOW_HEIGHT, label);
-            exportFeatVect(exportPath, x, y, windowWidth, windowHeight, label);
-//            cv::Mat cvVisualizationHalf = visualizationHalf();  //将直方图用图像进行显示
-//            cv::Mat cvVisualizeWindow = visualizeWindow(x, y, windowWidth, windowHeight);  //将直方图用图像进行显示
-//            if(cvImage.data != NULL)
-//            {
-//                cv::imshow("image", cvImage);
-//                cv::imshow("visualHalf", cvVisualizationHalf);
-//                cv::imshow("visualWindow", cvVisualizeWindow);
-//                cv::waitKey(0);
-//            }
-        }
-    }
-    for(int x = 0; x + windowWidth < numCellX; x++)
-    {
-        for(int i = 0; i < 2; i++)
-        {
-            int y = ys[i];
-            //cout<<"y:"<<y<<" x:"<<x<<endl;
-            exportFeatVect(exportPath, x, y, windowWidth, windowHeight, label);
-            //cv::Mat cvVisualizationHalf = visualizationHalf();  //将直方图用图像进行显示
-            //cv::Mat cvVisualizeWindow = visualizeWindow(x, y, windowWidth, windowHeight);  //将直方图用图像进行显示
-            //if(cvImage.data != NULL)
-//            {
-//                cv::imshow("image", cvImage);
-//                cv::imshow("visualHalf", cvVisualizationHalf);
-//                cv::imshow("visualWindow", cvVisualizeWindow);
-//                cv::waitKey(0);
-//            }
-        }
-    }
-}
-
-void CHog::cropNegSample(cv::Mat cvImage, string exportPath)
-{
-    for(int y = 0; y + windowHeight < numCellY; y++)
-    {
-        for(int x = 0; x + windowWidth < numCellX; x++)
-        {
-            exportFeatVect(exportPath, x, y, windowWidth, windowHeight, -1);
-//            cv::Mat cvVisualizationHalf = visualizationHalf();  //将直方图用图像进行显示
-//            cv::Mat cvVisualizeWindow = visualizeWindow(x, y, windowWidth, windowHeight);  //将直方图用图像进行显示
-//            if(cvImage.data != NULL)
-//            {
-//                cv::imshow("image", cvImage);
-//                cv::imshow("visualHalf", cvVisualizationHalf);
-//                cv::imshow("visualWindow", cvVisualizeWindow);
-//                cv::waitKey(0);
-//            }
-        }
-    }
-}
-
-void CHog::cropPosSample(cv::Mat cvImage, int label, string exportPath)
-{
-    exportFeatVect(exportPath, 3, 3, windowWidth, windowHeight, label);
-//    cv::Mat cvVisualizationHalf = visualizationHalf();  //将直方图用图像进行显示
-//    cv::Mat cvVisualizeWindow = visualizeWindow(3, 3, windowWidth, windowHeight);  //将直方图用图像进行显示
-//    if(cvImage.data != NULL)
-//    {
-//        cv::imshow("image", cvImage);
-//        cv::imshow("visualHalf", cvVisualizationHalf);
-//        cv::imshow("visualWindow", cvVisualizeWindow);
-//        cv::waitKey(0);
-//    }
-}
-
 void CHog::exportFeatVect(string exportPath, int x, int y, int w, int h, int l)
 {
     ofstream of(exportPath.c_str(), ios::app);

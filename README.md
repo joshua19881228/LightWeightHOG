@@ -6,7 +6,7 @@ It was every interesting that I wrote this HOG extractor on a Saturday in 2014. 
 
 | input | output |
 | ----- | ------ |
-| ![input](https://github.com/joshua19881228/LightWeightHOG/blob/master/test.jpg) | ![input](https://github.com/joshua19881228/LightWeightHOG/blob/master/test_hog.png) |
+| ![input](https://github.com/joshua19881228/LightWeightHOG/blob/master/test.jpg) | ![output](https://github.com/joshua19881228/LightWeightHOG/blob/master/test_hog.png) |
 
 ## Reference ##
 

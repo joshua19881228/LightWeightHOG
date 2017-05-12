@@ -4,9 +4,20 @@ A fast HOG feature extractor is implemented in this [repo](https://github.com/jo
 
 It was every interesting that I wrote this HOG extractor on a Saturday in 2014. My roomate went to his company and locked me home. I could not open the door, having nothing to do. Then I thought why not implementing this fast HOG extractor. So here it is. 
 
-| input | output |
-| ----- | ------ |
-| ![input](https://raw.githubusercontent.com/joshua19881228/LightWeightHOG/master/test.jpg) | ![output](https://raw.githubusercontent.com/joshua19881228/LightWeightHOG/master/test_hog.png) |
+<table>
+  <thead>
+    <tr>
+      <th>Input</th>
+      <th>Output</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img class="img-responsive center-block" src="https://raw.githubusercontent.com/joshua19881228/LightWeightHOG/master/test.jpg" alt="" width="320"/></td>
+      <td><img class="img-responsive center-block" src="https://raw.githubusercontent.com/joshua19881228/LightWeightHOG/master/test_hog.png" alt="" width="320"/></td>
+    </tr>
+  </tbody>
+</table>
 
 ## Reference ##
 
